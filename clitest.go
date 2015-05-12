@@ -65,7 +65,7 @@ func (t *BuildTester) RunWithOptions(test *testing.T, options RunOptions) TestRu
 	return r
 }
 
-func (t *TestRun) AssertSuccessful() bool {
+func (t TestRun) AssertSuccessful() bool {
 	if t.result != nil {
 		t.test.Errorf("expected a successful run result, got: %s", t.result)
 		return false
@@ -74,7 +74,7 @@ func (t *TestRun) AssertSuccessful() bool {
 	return true
 }
 
-func (t *TestRun) AssertExitCode(code int) bool {
+func (t TestRun) AssertExitCode(code int) bool {
 	expected := fmt.Sprintf("exit status %d", code)
 	if t.result != nil && t.result.Error() != expected {
 		t.test.Errorf("\nexpected:\n%s\ngot:\n%s", expected, t.result.Error())
@@ -83,19 +83,10 @@ func (t *TestRun) AssertExitCode(code int) bool {
 	return true
 }
 
-func (t *TestRun) AssertStdout(expected string) bool {
-	return assertByteReader(t.test, expected, t.stdout)
+func (t TestRun) Stdout() string {
+	return t.stdout.String()
 }
 
-func (t *TestRun) AssertStderr(expected string) bool {
-	return assertByteReader(t.test, expected, t.stderr)
-}
-
-func assertByteReader(t *testing.T, expected string, actual *bytes.Buffer) bool {
-	if actualString := actual.String(); actualString != expected {
-		t.Errorf("\nexpected:\n%s\ngot:\n%s", expected, actualString)
-		return false
-	}
-
-	return true
+func (t TestRun) Stderr() string {
+	return t.stderr.String()
 }

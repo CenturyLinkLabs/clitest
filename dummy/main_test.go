@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/CenturyLinkLabs/clitest"
+	"github.com/stretchr/testify/assert"
 )
 
 var b clitest.BuildTester
@@ -15,15 +16,15 @@ func init() {
 func TestNoArguments(t *testing.T) {
 	r := b.Run(t)
 	r.AssertSuccessful()
-	r.AssertStdout("No Arguments Passed")
-	r.AssertStderr("")
+	assert.Equal(t, "No Arguments Passed", r.Stdout())
+	assert.Empty(t, r.Stderr())
 }
 
 func TestArguments(t *testing.T) {
 	r := b.Run(t, "-test")
 	r.AssertSuccessful()
-	r.AssertStdout("You set the test flag")
-	r.AssertStderr("")
+	assert.Equal(t, "You set the test flag", r.Stdout())
+	assert.Empty(t, r.Stderr())
 }
 
 func TestEnvironmentVariables(t *testing.T) {
@@ -35,13 +36,13 @@ func TestEnvironmentVariables(t *testing.T) {
 		},
 	)
 	r.AssertSuccessful()
-	r.AssertStdout("CLITEST_TEST_VAR is testing123")
-	r.AssertStderr("")
+	assert.Equal(t, "CLITEST_TEST_VAR is testing123", r.Stdout())
+	assert.Empty(t, r.Stderr())
 }
 
 func TestBadExit(t *testing.T) {
 	r := b.Run(t, "-explode")
 	r.AssertExitCode(19)
-	r.AssertStderr("I exploded")
-	r.AssertStdout("")
+	assert.Equal(t, "I exploded", r.Stderr())
+	assert.Empty(t, r.Stdout())
 }
